@@ -51,6 +51,21 @@ jobs:
           gh release upload test "used-price-v$V.apk" used-price.apk --clobber
           gh release edit test --notes "버전 v$V · 커밋 ${GITHUB_SHA::7} · $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') (한국시간) · $(git log -1 --pretty=%s)"
 
+      # 빌드 결과를 build 브랜치에도 올림 (APK 안의 버전 확인용)
+      - name: build 브랜치에 결과 기록
+        if: always()
+        run: |
+          mkdir -p /tmp/out && cd /tmp/out
+          git init -q -b build
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          echo "conclusion=${{ job.status }}" > status.txt
+          echo "version=${{ steps.ver.outputs.version }}" >> status.txt
+          echo "commit=${GITHUB_SHA}" >> status.txt
+          echo "run=${GITHUB_RUN_ID}" >> status.txt
+          cp "$GITHUB_WORKSPACE"/used-price-v*.apk . 2>/dev/null || true
+          git add -A && git commit -q -m "빌드 결과 ${GITHUB_SHA::7}"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" build
+
       - uses: actions/upload-artifact@v4
         with:
           name: used-price-v${{ steps.ver.outputs.version }}
