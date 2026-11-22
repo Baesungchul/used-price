@@ -1,0 +1,4 @@
+conclusion=success
+version=0.1.0
+commit=5d605a6c4fe8f02c9095cc52cc9973e30c352dae
+run=44977721356
