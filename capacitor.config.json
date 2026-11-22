@@ -1,0 +1,8 @@
+{
+  "appId": "com.baesungchul.usedprice",
+  "appName": "중고가격",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}
